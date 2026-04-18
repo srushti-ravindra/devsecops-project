@@ -1,0 +1,33 @@
+name: DevSecOps Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  sonar-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Install Sonar Scanner
+      run: |
+        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-5.0.1.3006-linux.zip
+        unzip sonar-scanner-*.zip
+        echo "$(pwd)/sonar-scanner-*/bin" >> $GITHUB_PATH
+
+    - name: Run Sonar Scan
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey=devsecops-demo \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=http://squ_009f9790700402a50cf99cf273b8344f3bcd9b19:9000 \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
