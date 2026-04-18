@@ -18,16 +18,7 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Install Sonar Scanner
-      run: |
-        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-5.0.1.3006-linux.zip
-        unzip sonar-scanner-*.zip
-        echo "$(pwd)/sonar-scanner-*/bin" >> $GITHUB_PATH
-
-    - name: Run Sonar Scan
-      run: |
-        sonar-scanner \
-          -Dsonar.projectKey=devsecops-demo \
-          -Dsonar.sources=. \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
