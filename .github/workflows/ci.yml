@@ -29,5 +29,5 @@ jobs:
         sonar-scanner \
           -Dsonar.projectKey=devsecops-demo \
           -Dsonar.sources=. \
-          -Dsonar.host.url=http://squ_009f9790700402a50cf99cf273b8344f3bcd9b19:9000 \
+          -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
