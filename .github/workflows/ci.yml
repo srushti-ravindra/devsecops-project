@@ -32,8 +32,9 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.sources=.
 
-    # 4. OWASP ZAP Scan (for resume boost)
+    # 4. OWASP ZAP Scan (MODIFIED ONLY THIS PART)
     - name: Run OWASP ZAP Scan
       uses: zaproxy/action-baseline@v0.10.0
       with:
-        target: 'https://example.com'
+        target: https://juice-shop.herokuapp.com
+        rules_file_name: ''
