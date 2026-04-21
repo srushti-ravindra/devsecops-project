@@ -5,18 +5,26 @@ on:
     branches: [ "main" ]
 
 jobs:
-  sonar-scan:
+  security-pipeline:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up Java
-      uses: actions/setup-java@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
-        distribution: 'temurin'
-        java-version: '17'
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install flask
+
+    - name: Run Flask App
+      run: |
+        python app.py &
+        sleep 10
 
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v5
@@ -25,6 +33,11 @@ jobs:
       with:
         args: >
           -Dsonar.projectKey=srushti-ravindra_devsecops-project
-          -Dsonar.organization=srushti-ravindra-org
+          -Dsonar.organization=srushti-ravindra
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.sources=.
+
+    - name: Run OWASP ZAP Scan
+      uses: zaproxy/action-baseline@v0.10.0
+      with:
+        target: 'http://127.0.0.1:5000'
