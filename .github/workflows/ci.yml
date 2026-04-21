@@ -13,14 +13,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # 2. Setup Java (for SonarCloud)
+    # 2. Setup Java (SonarCloud needs it)
     - name: Set up Java
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # 3. SonarCloud Scan (CI MODE)
+    # 3. SonarCloud Scan
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v6
       env:
@@ -32,19 +32,18 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.sources=.
 
-    # 4. OWASP ZAP Scan (FIXED VERSION)
+    # 4. OWASP ZAP Scan (FIXED)
     - name: Run OWASP ZAP Scan
       uses: zaproxy/action-baseline@v0.11.0
       with:
         target: https://juice-shop.herokuapp.com
-        cmd_options: "-a -d"
+        cmd_options: "-a -r report.html -J report.json"
 
-    # 5. Upload ZAP Reports (IMPORTANT FIX)
+    # 5. Upload ZAP Reports
     - name: Upload ZAP Reports
       uses: actions/upload-artifact@v4
       with:
         name: zap-security-report
         path: |
-          report_json.json
-          report_md.md
-          report_html.html
+          report.html
+          report.json
