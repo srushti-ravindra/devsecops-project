@@ -2,25 +2,25 @@ name: DevSecOps Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   security-pipeline:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout code
+    # 1. Checkout repo
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # 2. Setup Java (required for Sonar)
+    # 2. Setup Java for Sonar
     - name: Set up Java
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # 3. SonarCloud Scan
+    # 3. SonarCloud Scan (CI MODE FIXED)
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v6
       env:
@@ -31,10 +31,11 @@ jobs:
           -Dsonar.organization=srushti-ravindra
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.sources=.
+          -Dsonar.python.version=3
 
-    # 4. OWASP ZAP Scan (MODIFIED ONLY THIS PART)
+    # 4. OWASP ZAP Scan (FIXED - NO PERMISSION ISSUE)
     - name: Run OWASP ZAP Scan
       uses: zaproxy/action-baseline@v0.10.0
       with:
         target: https://juice-shop.herokuapp.com
-        rules_file_name: ''
+        cmd_options: "-a"
