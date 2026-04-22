@@ -9,48 +9,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout code
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # 1. Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # 2. Setup Java (required for SonarCloud)
-    - name: Set up Java
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      # 2. Setup Java (required for SonarCloud)
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-    # 3. SonarCloud Scan (SAST)
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarqube-scan-action@v6
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      with:
-        args: >
-          -Dsonar.projectKey=srushti-ravindra_devsecops-project2
-          -Dsonar.organization=srushti-ravindra
-          -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.sources=.
+      # 3. SonarCloud Scan (SAST)
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=srushti-ravindra_devsecops-project2
+            -Dsonar.organization=srushti-ravindra
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=.
 
-    # 4. Run OWASP ZAP Scan (FINAL FIX)
-    - name: Run OWASP ZAP Scan
-      run: |
-        docker run --rm \
-        -v $(pwd):/zap/wrk \
-        ghcr.io/zaproxy/zaproxy:stable \
-        zap-baseline.py \
-        -t https://vvce.ac.in \
-        -r report_html.html \
-        -w report_md.md \
-        -J report_json.json \
-        -z "-config automation.enabled=false"
+      # 4. Run OWASP ZAP Scan (FINAL FIX - ROOT USER)
+      - name: Run OWASP ZAP Scan
+        run: |
+          docker run --rm \
+          -u root \
+          -v $(pwd):/zap/wrk \
+          ghcr.io/zaproxy/zaproxy:stable \
+          zap-baseline.py \
+          -t https://vvce.ac.in \
+          -r report_html.html \
+          -w report_md.md \
+          -J report_json.json
 
-    # 5. Upload ZAP Reports
-    - name: Upload ZAP Reports
-      uses: actions/upload-artifact@v4
-      with:
-        name: zap-security-report
-        path: |
-          report_html.html
-          report_md.md
-          report_json.json
+      # 5. Upload ZAP Reports
+      - name: Upload ZAP Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-security-report
+          path: |
+            report_html.html
+            report_md.md
+            report_json.json
