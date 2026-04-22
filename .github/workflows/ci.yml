@@ -29,14 +29,13 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.sources=.
 
-       # 4. Run OWASP ZAP Scan (FIXED)
+          # 4. Run OWASP ZAP Scan (FINAL FIX)
     - name: Run OWASP ZAP Scan
       uses: zaproxy/action-baseline@v0.11.0
       with:
         target: "https://vvce.ac.in"
-        cmd_options: "-a"
-      continue-on-error: true   # IMPORTANT (don’t fail pipeline)
-
+        cmd_options: "-a -config api.disablekey=true"
+      continue-on-error: true
     # 5. Fix permissions (VERY IMPORTANT)
     - name: Fix permissions
       run: |
