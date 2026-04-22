@@ -40,7 +40,7 @@ jobs:
           -v $(pwd):/zap/wrk \
           ghcr.io/zaproxy/zaproxy:stable \
           zap-baseline.py \
-          -t https://testphp.vulnweb.com \
+          -t https://demo.testfire.net \
           -r report_html.html \
           -w report_md.md \
           -J report_json.json
