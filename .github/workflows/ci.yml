@@ -9,15 +9,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # 1. Checkout code
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # 2. Setup Java (required for SonarCloud)
     - name: Set up Java
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: '17'
 
+    # 3. SonarCloud Scan (SAST)
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v6
       env:
@@ -29,19 +32,14 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.sources=.
 
-    # 4. Run OWASP ZAP Scan (FINAL FIX)
+    # 4. OWASP ZAP Scan (DAST)
     - name: Run OWASP ZAP Scan
       uses: zaproxy/action-baseline@v0.11.0
       with:
         target: "https://vvce.ac.in"
-        cmd_options: "-a -config api.disablekey=true"
       continue-on-error: true
-    # 5. Fix permissions (VERY IMPORTANT)
-    - name: Fix permissions
-      run: |
-        sudo chmod -R 777 .
 
-    # 6. Upload ZAP Reports (FINAL)
+    # 5. Upload ZAP Reports
     - name: Upload ZAP Reports
       uses: actions/upload-artifact@v4
       with:
