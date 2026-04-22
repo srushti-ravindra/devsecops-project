@@ -32,17 +32,18 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.sources=.
 
-       # 4. Run OWASP ZAP Scan (WORKING FIX)
-    - name: Run OWASP ZAP Scan (Manual Docker)
+    # 4. Run OWASP ZAP Scan (FINAL FIX)
+    - name: Run OWASP ZAP Scan
       run: |
         docker run --rm \
-        -v $(pwd):/zap/wrk:rw \
+        -v $(pwd):/zap/wrk \
         ghcr.io/zaproxy/zaproxy:stable \
         zap-baseline.py \
         -t https://vvce.ac.in \
         -r report_html.html \
         -w report_md.md \
-        -J report_json.json
+        -J report_json.json \
+        -z "-config automation.enabled=false"
 
     # 5. Upload ZAP Reports
     - name: Upload ZAP Reports
